@@ -1,0 +1,62 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h4 class="display-4">Welcome, Here is your Fullcalender Js Demo with Full day event.</h4>
+    <div id="calenderDiv"></div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+
+            var ev = [];
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("getDatesOfAllDayEvent", "Home")",
+                success: function (data) {
+                    $.each(data, function (i, v) {
+                        ev.push({
+                            id:v.id,
+                            title: v.title,
+                            start: moment(v.dateTime, "DD-MM-YYYY"),
+                            color: v.color,
+                            allDay: true
+                        });
+                    });
+                    GenerateCalender(ev);
+                },
+                error: function () {
+                    alert("fail");
+                }
+
+            })
+
+
+
+
+
+            function GenerateCalender(events) {
+                $("#calenderDiv").fullCalendar('destroy');
+                $("#calenderDiv").fullCalendar({
+                    contentHeight: 450,
+                    timeFormat: 'h(:mm)a',
+                    defaultDate: new Date(),
+                    header: {
+                        left: 'prev,next,today',
+                        center: 'title',
+                        right: ''
+                    },
+                    eventLimit: true,
+                    eventColor: "#378006",
+                    events: events,
+                    eventClick: function (calEvent, jsEvent, view) {
+                        alert("Event with id " + calEvent.id + " called");
+                    }
+                })
+            }
+        });
+
+    </script>
+}
